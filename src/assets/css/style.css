@@ -43,16 +43,16 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.2809 0.0056 91.57);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: oklch(0.4967 0.0115 87.52);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
@@ -60,8 +60,8 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --input: oklch(0.9433 0.0029 84.56);
+  --ring: oklch(0.5644 0.2391 269.27);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -111,6 +111,14 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@theme {
+  --color-primary: #425eff;
+  --color-secondary: #65625b;
+  --color-foreground: #2A2926;
+
+  --font-inter: 'Inter', sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -118,12 +126,10 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@theme {
-  --color-primary: #425eff;
-  --color-secondary: #65625b;
-  --font-inter: 'Inter', sans-serif;
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @layer components {
@@ -145,6 +151,12 @@
     font-size: 12px;
     line-height: 16px;
     letter-spacing: -0.015em;
+  }
+}
+
+@layer utilities {
+  .required-label {
+    @apply [&_label]:after:content-['*'] [&_label]:after:text-red-500;
   }
 }
 
