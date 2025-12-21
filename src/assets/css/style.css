@@ -119,3 +119,45 @@
     @apply bg-background text-foreground;
   }
 }
+
+@theme {
+  --color-primary: #425eff;
+  --color-secondary: #65625b;
+  --font-inter: 'Inter', sans-serif;
+}
+
+@layer components {
+  .title {
+    @apply font-inter font-semibold text-2xl leading-9 text-center;
+    letter-spacing: -2%;
+  }
+  .body {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.015em;
+  }
+  .small-body {
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: -0.015em;
+  }
+}
+
+.login-container {
+  @apply mx-auto flex w-full h-lvh;
+
+  /* max-w-[1352px] max-h-[764px]; */
+  /* max-width: 1440px; */
+}
+
+.login-content-section {
+  @apply w-1/2 flex flex-col items-center justify-between;
+  background: radial-gradient(56.51% 50% at 50% 50%, #222c66 0%, #141725 100%);
+}
+.login-content-list {
+}
