@@ -114,7 +114,7 @@
 @theme {
   --color-primary: #425eff;
   --color-secondary: #65625b;
-  --color-foreground: #2A2926;
+  --color-foreground: #2a2926;
 
   --font-inter: 'Inter', sans-serif;
 }
@@ -127,7 +127,7 @@
     @apply bg-background text-foreground;
   }
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role='button']:not(:disabled) {
     cursor: pointer;
   }
 }
@@ -161,14 +161,14 @@
 }
 
 .login-container {
-  @apply mx-auto flex w-full h-lvh;
+  @apply mx-auto flex flex-col md:flex-row w-full h-full
 
   /* max-w-[1352px] max-h-[764px]; */
-  /* max-width: 1440px; */
+  /* max-width: 1440px; */;
 }
 
 .login-content-section {
-  @apply w-1/2 flex flex-col items-center justify-between;
+  @apply flex flex-col items-center justify-center lg:justify-between;
   background: radial-gradient(56.51% 50% at 50% 50%, #222c66 0%, #141725 100%);
 }
 .login-content-list {

@@ -2,17 +2,26 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { ref } from 'vue'
+
+const isPasswordVisible = ref(false)
+
+const togglePassword = () => {
+  isPasswordVisible.value = !isPasswordVisible.value
+}
 </script>
 
 <template>
   <div class="flex w-full h-full justify-center items-center">
     <div class="login-container">
-      <div class="login-content-section">
-        <div class="max-w-[432px] pt-21.25">
+      <div class="md:w-1/2 login-content-section">
+        <div class="w-full max-w-[432px] pt-10 lg:pt-21.25">
           <img class="mb-6 mx-auto" src="/img/payflow-logo-light.svg" />
-          <h1 class="title text-white mb-10">Execute payments with control and peace of mind.</h1>
+          <h1 class="title max-w-full px-4 lg:px-0 text-white mb-10">
+            Execute payments with control and peace of mind.
+          </h1>
           <ul
-            class="[&_li]:mb-2 text-white [&_li]:last:mb-0 mb-22.5 list-image-[url(/img/list-icon.svg)]"
+            class="text-white mb-10 lg:mb-22.5 pl-6 mx-4 [&_li]:mb-2 [&_li]:last:mb-0 list-image-[url(/img/list-icon.svg)]"
           >
             <li class="small-body">
               Generate standard intakes and route them to the right approval flow.
@@ -28,10 +37,10 @@ import { Button } from '@/components/ui/button'
           </ul>
         </div>
         <div class="w-full">
-          <img src="/img/login-content-bg.png" alt="" />
+          <img src="/img/login-content-bg.png" class="md:max-w-10/12" alt="" />
         </div>
       </div>
-      <div class="w-1/2 flex justify-center items-center">
+      <div class="md:w-1/2 px-4 lg:px-0 py-10 lg:py-0 flex justify-center items-center">
         <div class="w-full h-auto max-w-[432px] flex flex-col justify-start items-start">
           <img src="/img/login-Icon.svg" class="mb-6" alt="login icon" />
           <h2 class="title text-foreground mb-1">Login</h2>
@@ -50,7 +59,26 @@ import { Button } from '@/components/ui/button'
                 <Label for="password">Password</Label>
                 <a href="#" class="small-body font-semibold text-primary"> Forgot password? </a>
               </div>
-              <Input id="password" type="password" placeholder="" />
+              <div class="relative">
+                <Input
+                  class=""
+                  id="password"
+                  :type="isPasswordVisible ? 'text' : 'password'"
+                  placeholder=""
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  class="px-3 hover:bg-transparent absolute right-0 top-1/2 -translate-y-1/2"
+                  @click="togglePassword"
+                >
+                  <img
+                    class="max-w-fit"
+                    :src="isPasswordVisible ? '/img/eye-off.svg' : '/img/eye-on.svg'"
+                    alt=""
+                  />
+                </Button>
+              </div>
             </div>
 
             <Button class="w-full">Login</Button>
