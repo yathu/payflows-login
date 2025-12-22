@@ -1,15 +1,39 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { ref } from 'vue'
 import LoginLayout from '@/layouts/LoginLayout.vue'
+import { ref } from 'vue'
+
+import { toTypedSchema } from '@vee-validate/zod'
+import { useForm } from 'vee-validate'
+import * as z from 'zod'
+
+import { FormField } from '@/components/ui/form'
 
 const isPasswordVisible = ref(false)
 
 const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value
 }
+
+const formSchema = toTypedSchema(
+  z.object({
+    email: z.string().min(2).max(50).email(),
+    password: z.string().min(5),
+  }),
+)
+
+const { handleSubmit, meta } = useForm({
+  validationSchema: formSchema,
+  initialValues: {
+    email: '',
+    password: '',
+  },
+})
+const onSubmit = handleSubmit((data) => {
+  console.log(data)
+})
 </script>
 
 <template>
@@ -45,39 +69,54 @@ const togglePassword = () => {
         Don’t have an account? <a class="text-primary" href="#">Sign up</a>
       </p>
       <form
+        id="loginForm"
+        @submit="onSubmit"
         class="w-full [&_label]:after:content-['*'] [&_label]:after:text-red-500 flex flex-col gap-6"
       >
-        <div class="grid w-full items-center gap-1.5">
-          <Label for="email">Email</Label>
-          <Input id="email" type="email" placeholder="Email" />
-        </div>
-        <div class="grid w-full items-center gap-1.5">
-          <div class="flex justify-between items-center">
-            <Label for="password">Password</Label>
-            <a href="#" class="text-small-body font-semibold text-primary"> Forgot password? </a>
+        <FormField v-slot="{ field }" name="email">
+          <div class="grid w-full items-center gap-1.5">
+            <Label for="email">Email</Label>
+            <Input v-bind="field" id="email" type="email" placeholder="Email" />
           </div>
-          <div class="relative">
-            <Input
-              class=""
-              id="password"
-              :type="isPasswordVisible ? 'text' : 'password'"
-              placeholder=""
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              class="px-3 hover:bg-transparent absolute right-0 top-1/2 -translate-y-1/2"
-              @click="togglePassword"
-            >
-              <img
-                class="max-w-fit"
-                :src="isPasswordVisible ? '/img/eye-off.svg' : '/img/eye-on.svg'"
-                alt=""
+        </FormField>
+
+        <FormField v-slot="{ field }" name="password">
+          <div class="grid w-full items-center gap-1.5">
+            <div class="flex justify-between items-center">
+              <Label for="password">Password</Label>
+              <a href="#" class="text-small-body font-semibold text-primary"> Forgot password? </a>
+            </div>
+            <div class="relative">
+              <Input
+                v-bind="field"
+                class=""
+                id="password"
+                :type="isPasswordVisible ? 'text' : 'password'"
               />
-            </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                class="px-3 hover:bg-transparent absolute right-0 top-1/2 -translate-y-1/2"
+                @click="togglePassword"
+              >
+                <img
+                  class="max-w-fit"
+                  :src="isPasswordVisible ? '/img/eye-off.svg' : '/img/eye-on.svg'"
+                  alt=""
+                />
+              </Button>
+            </div>
           </div>
-        </div>
-        <Button class="w-full">Login</Button>
+        </FormField>
+
+        <Button
+          :variant="!meta.valid ? 'secondary' : 'default'"
+          class="w-full"
+          type="submit"
+          form="loginForm"
+          :disabled="!meta.valid"
+          >Login</Button
+        >
       </form>
     </template>
   </LoginLayout>

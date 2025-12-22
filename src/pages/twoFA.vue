@@ -54,7 +54,9 @@ const otpMaxLength = ref(6)
           </InputOTPGroup>
         </InputOTP>
 
-        <Button variant="secondary" class="w-full mt-6" disabled>Resend code</Button>
+        <Button variant="secondary" class="w-full mt-6 text-foreground" disabled
+          >Resend code</Button
+        >
       </form>
     </template>
   </LoginLayout>
