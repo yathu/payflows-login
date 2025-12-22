@@ -53,7 +53,7 @@
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.4967 0.0115 87.52);
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-foreground: oklch(0.2809 0.0056 91.57);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
@@ -113,8 +113,11 @@
 
 @theme {
   --color-primary: #425eff;
-  --color-secondary: #65625b;
+  --color-secondary: #edecea;
   --color-foreground: #2a2926;
+  --color-light: #65625b;
+  --color-error: #e54f3a;
+  /* oklch(0.6305 0.1896 30.87) */
 
   --font-inter: 'Inter', sans-serif;
 }
@@ -133,11 +136,19 @@
 }
 
 @layer components {
-  .title {
+  .text-title {
     @apply font-inter font-semibold text-2xl leading-9 text-center;
-    letter-spacing: -2%;
+    letter-spacing: -0.02em;
   }
-  .body {
+  .text-large-title {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 32px !important;
+    line-height: 44px;
+    letter-spacing: -0.0225em;
+  }
+  .text-body {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
@@ -145,7 +156,7 @@
     line-height: 20px;
     letter-spacing: -0.015em;
   }
-  .small-body {
+  .text-small-body {
     font-family: Inter;
     font-weight: 500;
     font-size: 12px;
@@ -170,6 +181,4 @@
 .login-content-section {
   @apply flex flex-col items-center justify-center lg:justify-between;
   background: radial-gradient(56.51% 50% at 50% 50%, #222c66 0%, #141725 100%);
-}
-.login-content-list {
 }
