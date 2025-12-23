@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import { ref } from 'vue'
 
@@ -21,6 +21,7 @@ const authStore = useAuthStore()
 
 const isPasswordVisible = ref(false)
 const loading = ref(false)
+const errorMessage = ref('')
 
 const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value
@@ -43,17 +44,23 @@ const { handleSubmit, meta } = useForm({
 })
 
 const onSubmit = handleSubmit(async (data) => {
-  console.log(data)
-  loading.value = true
-  const res = await signIn(data)
+  try {
+    loading.value = true
+    errorMessage.value = ''
 
-  if (res?.success) {
-    authStore.setLoginOnlySuccess(res?.data?.pass_code)
-    router.push(PATHS.TWOFA)
-  } else {
-    console.log(res)
+    const res = await signIn(data)
+
+    if (res?.success) {
+      authStore.setLoginOnlySuccess(res?.data?.pass_code)
+      router.push(PATHS.TWOFA)
+    } else {
+      console.log(res)
+      errorMessage.value = res?.error?.message
+    }
+    loading.value = false
+  } catch (error) {
+    console.log('SignSubmit error ==>', error)
   }
-  loading.value = false
 })
 </script>
 
@@ -90,7 +97,7 @@ const onSubmit = handleSubmit(async (data) => {
         Don’t have an account? <a class="text-primary" href="#">Sign up</a>
       </p>
 
-      <Alert class="bg-warning-100 py-2 px-3 border-0 mb-6">
+      <Alert v-show="errorMessage" class="bg-warning-100 py-2 px-3 border-0 mb-6">
         <AlertDescription class="body-text text-warning-700 flex gap-2">
           <img src="/img/info.svg" alt="info icon" class="" />
 
