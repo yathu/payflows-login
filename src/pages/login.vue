@@ -60,20 +60,20 @@ const onSubmit = handleSubmit(async (data) => {
 <template>
   <LoginLayout>
     <template #contentSlot>
-      <h1 class="text-title max-w-full px-4 lg:px-0 text-white mb-10">
+      <h1 class="title-text max-w-full px-4 lg:px-0 text-white mb-10">
         Execute payments with control and peace of mind.
       </h1>
       <ul
         class="text-white mb-10 lg:mb-22.5 pl-6 mx-4 [&_li]:mb-2 [&_li]:last:mb-0 list-image-[url(/img/list-icon.svg)]"
       >
-        <li class="text-small-body">
+        <li class="body-text-small">
           Generate standard intakes and route them to the right approval flow.
         </li>
-        <li class="text-small-body">
+        <li class="body-text-small">
           Payflows payment processes with real-time notifications and maintain a comprehensive audit
           trail.
         </li>
-        <li class="text-small-body">
+        <li class="body-text-small">
           Pay from any source, to any domestic or international recipient at competitive rates,
           without ever leaving Payflows.
         </li>
@@ -85,8 +85,8 @@ const onSubmit = handleSubmit(async (data) => {
 
     <template #formSlot>
       <img src="/img/login-Icon.svg" class="mb-6" alt="login icon" />
-      <h2 class="text-title text-foreground mb-1">Login</h2>
-      <p class="text-body text-light mb-6">
+      <h2 class="title-text text-foreground mb-1">Login</h2>
+      <p class="body-text text-light mb-6">
         Don’t have an account? <a class="text-primary" href="#">Sign up</a>
       </p>
 
@@ -114,7 +114,7 @@ const onSubmit = handleSubmit(async (data) => {
           <div class="grid w-full items-center gap-1.5">
             <div class="flex justify-between items-center">
               <Label for="password">Password</Label>
-              <a href="#" class="text-small-body font-semibold text-primary"> Forgot password? </a>
+              <a href="#" class="body-text-small font-semibold text-primary"> Forgot password? </a>
             </div>
             <div class="relative">
               <Input

@@ -138,11 +138,11 @@
 }
 
 @layer components {
-  .text-title {
+  .title-text {
     @apply font-inter font-semibold text-2xl leading-9 text-center;
     letter-spacing: -0.02em;
   }
-  .text-large-title {
+  .title-text-large {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 600;
@@ -150,7 +150,7 @@
     line-height: 44px;
     letter-spacing: -0.0225em;
   }
-  .text-body {
+  .body-text {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
@@ -158,7 +158,7 @@
     line-height: 20px;
     letter-spacing: -0.015em;
   }
-  .text-small-body {
+  .body-text-small {
     font-family: Inter;
     font-weight: 500;
     font-size: 12px;
