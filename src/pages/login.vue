@@ -14,6 +14,7 @@ import { FormField } from '@/components/ui/form'
 import { signIn } from '@/APi/Api'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { PATHS } from '@/router'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -48,7 +49,7 @@ const onSubmit = handleSubmit(async (data) => {
 
   if (res?.success) {
     authStore.setLoginOnlySuccess(res?.data?.pass_code)
-    router.push('twoFa')
+    router.push(PATHS.TWOFA)
   } else {
     console.log(res)
   }

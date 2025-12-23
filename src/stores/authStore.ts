@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('authStore', {
       const sessionAuthState = sessionStorage.getItem('authState')
       const sessionpassCode = sessionStorage.getItem('passCode')
 
-      if (sessionAuthState === 'loginSuccess' && sessionpassCode) {
+      if (sessionAuthState === 'loginOnlySuccess' && sessionpassCode) {
         this.authState = 'loginOnlySuccess'
         this.passCode = sessionpassCode
         return
