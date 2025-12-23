@@ -4,14 +4,21 @@ import { defineStore } from 'pinia'
 export const useAuthStore = defineStore('authStore', {
   state: (): AuthStore => ({
     authState: 'unauthenticated',
-    token: undefined,
-    user: undefined,
-    passCode: undefined,
+    token: null,
+    user: null,
+    passCode: null,
+    otpAttempts: 0,
+    isOtpLocked: false,
+    otpLockedTime: null,
+    lastOtpAttemptTime: null,
+    maxtOtpAttemptTimes: 3,
   }),
   getters: {
     isAuthenticated: (state) => state.authState === 'authenticated',
     isLoginOnlySuccess: (state) => state.authState === 'loginOnlySuccess',
     isUnAuthenticated: (state) => state.authState === 'unauthenticated',
+    getOtpAtteptsRemaining: (state) => state.maxtOtpAttemptTimes - state.otpAttempts,
+    canAttemptOtp: (state) => state.otpAttempts < state.maxtOtpAttemptTimes,
   },
   actions: {
     setLoginOnlySuccess(passCode: string) {
@@ -21,6 +28,18 @@ export const useAuthStore = defineStore('authStore', {
       //set in session storage for temp & expire on close
       sessionStorage.setItem('authState', this.authState)
       sessionStorage.setItem('passCode', this.passCode)
+    },
+
+    handleOtp() {
+      //all logic handles here
+      if (this.otpAttempts >= this.maxtOtpAttemptTimes) {
+        this.isOtpLocked = true
+        this.otpLockedTime = Date.now()
+        return
+      }
+      this.otpAttempts += 1
+      this.lastOtpAttemptTime = Date.now()
+      localStorage.setItem('lastOtpAttemptTime', this.lastOtpAttemptTime.toString())
     },
 
     setAuthenticated(token: string, user: User) {
@@ -43,9 +62,9 @@ export const useAuthStore = defineStore('authStore', {
 
     setUnauthenticated() {
       this.authState = 'unauthenticated'
-      this.token = undefined
-      this.user = undefined
-      this.passCode = undefined
+      this.token = null
+      this.user = null
+      this.passCode = null
 
       localStorage.removeItem('authState')
       localStorage.removeItem('token')
@@ -58,12 +77,17 @@ export const useAuthStore = defineStore('authStore', {
       const initAuthState = localStorage.getItem('authState')
       const initToken = localStorage.getItem('token')
       const initUser = localStorage.getItem('user')
+      const lastOtpAttemptTime = localStorage.getItem('lastOtpAttemptTime')
 
       try {
         if (initAuthState === 'authenticated' && initToken) {
           this.authState = 'authenticated'
           this.token = initToken
           this.user = initUser ? JSON.parse(initUser) : undefined
+
+          if (lastOtpAttemptTime) {
+            this.lastOtpAttemptTime = parseInt(lastOtpAttemptTime)
+          }
           return
         }
       } catch (error) {
@@ -82,7 +106,7 @@ export const useAuthStore = defineStore('authStore', {
 
       // Otherwise set unauthenticated
       this.authState = 'unauthenticated'
-      this.user = undefined
+      this.user = null
     },
   },
 })

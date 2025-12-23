@@ -1,10 +1,154 @@
 <script setup lang="ts">
+import { getNewOtpMock, verifyOtp } from '@/APi/Api'
 import { Button } from '@/components/ui/button'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import LoginLayout from '@/layouts/LoginLayout.vue'
-import { ref } from 'vue'
+import router, { PATHS } from '@/router'
+import { useAuthStore } from '@/stores/authStore'
+import { computed, onMounted, ref, watch } from 'vue'
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'vue-input-otp'
 
 const otpMaxLength = ref(6)
+const otp = ref('')
+const isLoading = ref(false)
+const errorMessage = ref('')
+
+const authStore = useAuthStore()
+
+//like useEffect
+const otpErrorMessage = computed(() => {
+  const attemptsLeft = authStore.getOtpAtteptsRemaining
+
+  if (attemptsLeft > 0) {
+    return `Invalid code. ${attemptsLeft} attempts left.`
+  }
+
+  return errorMessage
+})
+
+//auto submit OTP
+watch(otp, async (newOtp) => {
+  if (newOtp.length === 6 && !isLoading.value) {
+    try {
+      handleSubmitOTP()
+    } catch (error) {
+      console.log('OTP verification error==>', error)
+    }
+  }
+})
+
+const handleSubmitOTP = async () => {
+  try {
+    if (authStore.passCode && otp.value) {
+      isLoading.value = true
+      errorMessage.value = ''
+
+      const res = await verifyOtp({ pass_code: authStore.passCode, code: otp.value })
+
+      console.log('OTP verify res==>', res)
+
+      if (res?.success) {
+        const { token, user } = res.data
+        authStore.setAuthenticated(token, user)
+        router.push(PATHS.DASHBOARD)
+      } else {
+        console.log(res)
+        if (res.error.code == 'INVALID_2FA' && authStore.canAttemptOtp) {
+          //attempt
+          authStore.handleOtp()
+          const remaining = nextOtpTimeDiff()
+          console.log('remaining effect==>', remaining)
+          if (remaining > 0) {
+            console.log('start coutdown again ==>')
+            startCountdown(remaining)
+          } else {
+            stopCountdown()
+          }
+        } else {
+          errorMessage.value = res.error.message
+        }
+      }
+      isLoading.value = false
+    }
+  } catch (error) {
+    console.log('SignSubmit error ==>', error)
+  }
+}
+
+const otpRemainingSeconds = ref(0)
+let timerId: number | null = null
+
+const nextOtpTimeDiff = () => {
+  if (!authStore.lastOtpAttemptTime) return 0
+  if (authStore.isOtpLocked) return 0
+  if (!authStore.canAttemptOtp) return 0
+
+  const nowTime = Date.now()
+
+  console.log('nowTime==>', nowTime)
+
+  const otpLef = (nowTime - (authStore.lastOtpAttemptTime || 0)) / 1000
+
+  console.log('otpLef==>', otpLef)
+
+  return Math.round(30 - otpLef) // this 30 will be from store // env //feature Flag
+}
+
+function startCountdown(maxSeconds: number) {
+  stopCountdown()
+
+  otpRemainingSeconds.value = maxSeconds
+
+  const tick = () => {
+    if (otpRemainingSeconds.value <= 0) {
+      stopCountdown()
+      return
+    }
+
+    otpRemainingSeconds.value -= 1
+    timerId = setTimeout(tick, 1000)
+  }
+
+  //it starts the timer 1st time
+  timerId = setTimeout(tick, 1000)
+}
+
+function stopCountdown() {
+  if (timerId) {
+    clearTimeout(timerId)
+    timerId = null
+  }
+}
+
+onMounted(() => {
+  const remaining = nextOtpTimeDiff()
+  if (remaining > 0) {
+    console.log('remaining time==>', remaining)
+    startCountdown(remaining)
+  }
+})
+
+//show timer when last otp time updated
+// watch(
+//   () => authStore.lastOtpAttemptTime,
+//   () => {
+//     const remaining = nextOtpTimeDiff()
+//     console.log('remaining effect==>', remaining)
+//     if (remaining > 0) {
+//       console.log('start coutdown again ==>')
+//       startCountdown(remaining)
+//     } else {
+//       stopCountdown()
+//     }
+//   },
+// )
+
+const handleNewOtpRequest = async () => {
+  const res = await getNewOtpMock()
+  if (res && authStore.canAttemptOtp) {
+    authStore.handleOtp()
+  }
+}
 </script>
 
 <template>
@@ -47,17 +191,36 @@ const otpMaxLength = ref(6)
         Enter the code sent to 06******28 to confirm your identity.
       </p>
 
-      <form class="w-full">
-        <InputOTP :maxlength="6" class="w-full gap-0">
+      <div class="w-full">
+        <InputOTP
+          v-model="otp"
+          :maxlength="6"
+          :pattern="REGEXP_ONLY_DIGITS_AND_CHARS"
+          class="w-full gap-0 mb-1"
+          :disabled="isLoading"
+        >
           <InputOTPGroup v-for="n in otpMaxLength" :key="n" :class="n === 3 ? 'me-8' : 'me-4'">
             <InputOTPSlot class="title-text-large p-4 h-19 w-14" :index="n - 1" />
           </InputOTPGroup>
         </InputOTP>
 
-        <Button variant="secondary" class="w-full mt-6 text-foreground" disabled
-          >Resend code</Button
+        <label v-show="errorMessage" class="text-error body-text-small">
+          {{ otpErrorMessage }}
+        </label>
+
+        {{ authStore.lastOtpAttemptTime }} -
+        {{ authStore.getOtpAtteptsRemaining }}
+
+        <Button
+          @click="handleNewOtpRequest"
+          variant="secondary"
+          class="w-full mt-6 text-foreground"
+          :disabled="otpRemainingSeconds > 0 || !authStore.canAttemptOtp || authStore.isOtpLocked"
         >
-      </form>
+          <img v-show="isLoading" src="/img/spinner-white.svg" alt="" class="size-4 animate-spin" />
+          Resend code {{ otpRemainingSeconds > 0 ? otpRemainingSeconds : '' }}</Button
+        >
+      </div>
     </template>
   </LoginLayout>
 </template>

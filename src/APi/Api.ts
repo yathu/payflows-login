@@ -1,25 +1,19 @@
 // const BASE_URL = 'https://oas31f7e47fdd11.free.beeceptor.com'
 
+import type {
+  ErrorResponse,
+  LoginCredentials,
+  LoginResponse,
+  Result,
+  TwoFactorPayload,
+  TwoFactorResponse,
+} from '@/types'
+
 const BASE_URL = import.meta.env.DEV
   ? '/api' // Development - uses Vite proxy (no CORS)
   : 'https://oas31f7e47fdd11.free.beeceptor.com'
 
-type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E }
-
-interface LoginCredentials {
-  email: string
-  password: string
-}
-
-interface LoginResponse {
-  pass_code: string
-}
-
-export interface ErrorResponse {
-  code: string
-  message: string
-}
-
+//currently we are repeting same fetch code, for prod app we can create a common fetch wrapper or axios instance to handle errors, headers, etc.
 export const signIn = async (
   credentials: LoginCredentials,
 ): Promise<Result<LoginResponse, ErrorResponse>> => {
@@ -31,8 +25,6 @@ export const signIn = async (
       },
       body: JSON.stringify(credentials),
     })
-
-    console.log('Login response all==>', response)
 
     if (!response.ok) {
       //we handle 401, 400 not need for now
@@ -65,4 +57,51 @@ export const signIn = async (
       },
     }
   }
+}
+
+export const verifyOtp = async (
+  payload: TwoFactorPayload,
+): Promise<Result<TwoFactorResponse, ErrorResponse>> => {
+  try {
+    //mock for testing delay
+    if (payload.code !== '123456') {
+      //return error message & code after delay
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      return {
+        success: false,
+        error: {
+          code: 'INVALID_2FA',
+          message: 'Invalid pass_code or 2FA code',
+        },
+      }
+    } else {
+      //return success after delay
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      return {
+        success: true,
+        data: {
+          token: 'mocked_jwt_token_abcdefg12345',
+          user: {
+            id: 'user_12345',
+            name: 'John Doe',
+            email: 'test@user.com',
+          },
+        },
+      }
+    }
+  } catch (error) {
+    console.error('verify OTP error==>', error)
+    return {
+      success: false,
+      error: {
+        code: 'network_error',
+        message: 'Something went wrong. Please try again later.',
+      },
+    }
+  }
+}
+
+export const getNewOtpMock = async (): Promise<number> => {
+  setTimeout(() => {}, 2000)
+  return 123456
 }
