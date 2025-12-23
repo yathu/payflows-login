@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import { ref } from 'vue'
 
@@ -10,17 +11,25 @@ import { useForm } from 'vee-validate'
 import * as z from 'zod'
 
 import { FormField } from '@/components/ui/form'
+import { signIn } from '@/APi/Api'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const isPasswordVisible = ref(false)
+const loading = ref(false)
 
 const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value
 }
 
+//in production will be in seprate file
 const formSchema = toTypedSchema(
   z.object({
     email: z.string().min(2).max(50).email(),
-    password: z.string().min(5),
+    password: z.string().min(5).max(12),
   }),
 )
 
@@ -31,8 +40,19 @@ const { handleSubmit, meta } = useForm({
     password: '',
   },
 })
-const onSubmit = handleSubmit((data) => {
+
+const onSubmit = handleSubmit(async (data) => {
   console.log(data)
+  loading.value = true
+  const res = await signIn(data)
+
+  if (res?.success) {
+    authStore.setLoginOnlySuccess(res?.data?.pass_code)
+    router.push('twoFa')
+  } else {
+    console.log(res)
+  }
+  loading.value = false
 })
 </script>
 
@@ -114,8 +134,10 @@ const onSubmit = handleSubmit((data) => {
           class="w-full"
           type="submit"
           form="loginForm"
-          :disabled="!meta.valid"
-          >Login</Button
+          :disabled="!meta.valid || loading"
+        >
+          <img v-show="loading" src="/img/spinner-white.svg" alt="" class="size-4 animate-spin" />
+          Login</Button
         >
       </form>
     </template>

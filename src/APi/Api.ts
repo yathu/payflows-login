@@ -1,5 +1,7 @@
 const BASE_URL = 'https://oas31f7e47fdd11.free.beeceptor.com'
 
+type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E }
+
 interface LoginCredentials {
   email: string
   password: string
@@ -9,25 +11,46 @@ interface LoginResponse {
   pass_code: string
 }
 
-const signIn = async (credentials: LoginCredentials): Promise<LoginResponse | undefined> => {
+export interface ErrorResponse {
+  code: string
+  message: string
+}
+
+export const signIn = async (
+  credentials: LoginCredentials,
+): Promise<Result<LoginResponse, ErrorResponse>> => {
   try {
-    const response = await fetch(BASE_URL + '/login', {
+    const response = await fetch(BASE_URL + '/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
       headers: {
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*',
-        vary: 'Accept-Encoding',
+        'User-Agent': 'insomnia/11.6.1',
       },
     })
+
+    console.log('Login response all==>', response)
+
     if (!response.ok) {
+      //401, 400 errors
       throw new Error(`Response status: ${response.status}`)
     }
 
     const result = await response.json()
-    return result
+    console.log('Login response==>', result)
+
+    return {
+      success: true,
+      data: result,
+    }
   } catch (error) {
-    console.error(error)
-    return undefined
+    console.error('signInError==>', error)
+    return {
+      success: false,
+      error: {
+        code: 'network_error',
+        message: 'Something went wrong. Please try again later.',
+      },
+    }
   }
 }
