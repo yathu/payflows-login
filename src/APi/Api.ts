@@ -1,4 +1,8 @@
-const BASE_URL = 'https://oas31f7e47fdd11.free.beeceptor.com'
+// const BASE_URL = 'https://oas31f7e47fdd11.free.beeceptor.com'
+
+const BASE_URL = import.meta.env.DEV
+  ? '/api' // Development - uses Vite proxy (no CORS)
+  : 'https://oas31f7e47fdd11.free.beeceptor.com'
 
 type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E }
 
@@ -22,11 +26,10 @@ export const signIn = async (
   try {
     const response = await fetch(BASE_URL + '/auth/login', {
       method: 'POST',
-      body: JSON.stringify(credentials),
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'insomnia/11.6.1',
       },
+      body: JSON.stringify(credentials),
     })
 
     console.log('Login response all==>', response)
