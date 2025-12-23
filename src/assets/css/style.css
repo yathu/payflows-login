@@ -116,7 +116,10 @@
   --color-foreground: #2a2926;
   --color-light: #65625b;
   --color-error: #e54f3a;
-  /* oklch(0.6305 0.1896 30.87) */
+
+  --color-warning-100: #fbe8d4;
+  --color-warning-600: #c97016;
+  --color-warning-700: #a85e13;
 
   --font-inter: 'Inter', sans-serif;
 }

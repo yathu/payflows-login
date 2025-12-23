@@ -35,7 +35,16 @@ export const signIn = async (
     console.log('Login response all==>', response)
 
     if (!response.ok) {
-      //401, 400 errors
+      //we handle 401, 400 not need for now
+      if (response.status === 401) {
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_CREDENTIALS',
+            message: 'This email and password pair doesn’t match any known account.',
+          },
+        }
+      }
       throw new Error(`Response status: ${response.status}`)
     }
 

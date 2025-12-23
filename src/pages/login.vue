@@ -89,6 +89,15 @@ const onSubmit = handleSubmit(async (data) => {
       <p class="text-body text-light mb-6">
         Don’t have an account? <a class="text-primary" href="#">Sign up</a>
       </p>
+
+      <Alert class="bg-warning-100 py-2 px-3 border-0 mb-6">
+        <AlertDescription class="body-text text-warning-700 flex gap-2">
+          <img src="/img/info.svg" alt="info icon" class="" />
+
+          This email and password pair doesn’t match any known account.
+        </AlertDescription>
+      </Alert>
+
       <form
         id="loginForm"
         @submit="onSubmit"
