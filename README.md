@@ -108,9 +108,11 @@ Navigation guards enforce access control:
 
 Created `LoginLayout.vue` component used by both Login and 2FA pages for consistent design and code reusability.
 
-### **Assumption**
+## Assumptions
 
 The Figma design is based on a 764 height screen. To keep the bottom left image visually consistent across different screen sizes, I assumed the image should remain fixed at the bottom left of the screen and implemented it accordingly.
+
+Additionally, I followed the Figma behavior where the submit button is disabled when inputs are invalid. For this reason, no inline validation message (such as minimum character requirements) is shown. The button becomes active only when the input meets the required criteria.
 
 ## ⚠️ Known Limitations
 
