@@ -47,7 +47,7 @@ watch(otp, async (newOtp) => {
     try {
       handleSubmitOTP()
     } catch (error) {
-      console.log('OTP verification error==>', error)
+      console.error('OTP verification error==>', error)
     }
   }
 })
@@ -59,14 +59,12 @@ const handleSubmitOTP = async () => {
       errorMessage.value = ''
 
       const res = await verifyOtp({ pass_code: authStore.passCode, code: otp.value })
-      console.log('OTP verify res==>', res)
 
       if (res?.success) {
         const { token, user } = res.data
         authStore.setAuthenticated(token, user)
         router.push(PATHS.DASHBOARD)
       } else {
-        console.log(res)
         if (res.error.code == 'INVALID_2FA' && !authStore.isOTPLocked) {
           errorMessage.value = res?.error.message
           //attempt
@@ -78,7 +76,7 @@ const handleSubmitOTP = async () => {
       isLoading.value = false
     }
   } catch (error) {
-    console.log('SignSubmit error ==>', error)
+    console.error('SignSubmit error ==>', error)
   }
 }
 
@@ -136,7 +134,7 @@ const handleNewOtpRequest = async () => {
     await getNewOtpMock() //this is just for delay
     isLoading.value = false
   } catch (error) {
-    console.log('getOTPError', error)
+    console.error('getOTPError', error)
   }
 }
 

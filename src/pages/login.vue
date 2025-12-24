@@ -54,12 +54,11 @@ const onSubmit = handleSubmit(async (data) => {
       authStore.setLoginOnlySuccess(res?.data?.pass_code)
       router.push(PATHS.TWOFA)
     } else {
-      console.log(res)
       errorMessage.value = res?.error?.message
     }
     loading.value = false
   } catch (error) {
-    console.log('SignSubmit error ==>', error)
+    console.error('SignSubmit error ==>', error)
   }
 })
 </script>

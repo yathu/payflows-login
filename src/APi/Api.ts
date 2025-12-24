@@ -41,8 +41,7 @@ export const signIn = async (
     }
 
     const result = await response.json()
-    console.log('Login response==>', result)
-
+    
     return {
       success: true,
       data: result,
