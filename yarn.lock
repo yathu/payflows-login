@@ -3094,6 +3094,7 @@ __metadata:
     eslint: "npm:^9.39.1"
     eslint-plugin-vue: "npm:~10.5.1"
     jiti: "npm:^2.6.1"
+    lucide-vue-next: "npm:^0.562.0"
     npm-run-all2: "npm:^8.0.4"
     pinia: "npm:^3.0.4"
     prettier: "npm:3.6.2"
@@ -3108,6 +3109,7 @@ __metadata:
     vue: "npm:^3.5.25"
     vue-input-otp: "npm:^0.3.2"
     vue-router: "npm:^4.6.3"
+    vue-sonner: "npm:^2.0.9"
     vue-tsc: "npm:^3.1.5"
     zod: "npm:^3.25.76"
   languageName: unknown
@@ -3126,6 +3128,15 @@ __metadata:
   dependencies:
     yallist: "npm:^3.0.2"
   checksum: 10c0/89b2ef2ef45f543011e38737b8a8622a2f8998cddf0e5437174ef8f1f70a8b9d14a918ab3e232cb3ba343b7abddffa667f0b59075b2b80e6b4d63c3de6127482
+  languageName: node
+  linkType: hard
+
+"lucide-vue-next@npm:^0.562.0":
+  version: 0.562.0
+  resolution: "lucide-vue-next@npm:0.562.0"
+  peerDependencies:
+    vue: ">=3.0.1"
+  checksum: 10c0/5ba792ea5e48d01fc99a3c5ae4a59d9767e5d4c7826901800831cf051cf85eb4a680b3564d2910ed4d17dc1d35223c37d006bdbcdb291d90a9491b9c6a20ae14
   languageName: node
   linkType: hard
 
@@ -4362,6 +4373,24 @@ __metadata:
   peerDependencies:
     vue: ^3.5.0
   checksum: 10c0/9dcbe1124f1f444ae263ca37914829eea1ebff3feaa182559efee611dfd4436bbebe0ebffdcb60e37fecfb2fbdc691346df00996eeba708485e9ea9b8a7dd193
+  languageName: node
+  linkType: hard
+
+"vue-sonner@npm:^2.0.9":
+  version: 2.0.9
+  resolution: "vue-sonner@npm:2.0.9"
+  peerDependencies:
+    "@nuxt/kit": ^4.0.3
+    "@nuxt/schema": ^4.0.3
+    nuxt: ^4.0.3
+  peerDependenciesMeta:
+    "@nuxt/kit":
+      optional: true
+    "@nuxt/schema":
+      optional: true
+    nuxt:
+      optional: true
+  checksum: 10c0/0001fcfd9163dd69f74bbbdbd50f61d7ceb514bf16571562cd51b0824b89cee809de2f93e1bb13fcc06375a07bc3e8bc1f552cb98e8ba1a665c8aecda47e039c
   languageName: node
   linkType: hard
 

@@ -184,3 +184,7 @@
   @apply flex flex-col items-center justify-center lg:justify-between;
   background: radial-gradient(56.51% 50% at 50% 50%, #222c66 0%, #141725 100%);
 }
+
+[data-sonner-toast][data-type='success'] {
+  @apply bg-emerald-400 text-white text-sm border-emerald-400;
+}

@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import { ref } from 'vue'
+import { toast } from 'vue-sonner'
 
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
@@ -52,6 +53,7 @@ const onSubmit = handleSubmit(async (data) => {
 
     if (res?.success) {
       authStore.setLoginOnlySuccess(res?.data?.pass_code)
+      toast.success('Logged in successfully')
       router.push(PATHS.TWOFA)
     } else {
       errorMessage.value = res?.error?.message

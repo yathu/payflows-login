@@ -7,6 +7,7 @@ import router, { PATHS } from '@/router'
 import { useAuthStore } from '@/stores/authStore'
 import { computed, onBeforeMount, ref, watch } from 'vue'
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'vue-input-otp'
+import { toast } from 'vue-sonner'
 
 const otpMaxLength = ref(6)
 const otp = ref('')
@@ -63,6 +64,7 @@ const handleSubmitOTP = async () => {
       if (res?.success) {
         const { token, user } = res.data
         authStore.setAuthenticated(token, user)
+        toast.success('OTP verified. Redirecting to dashboard')
         router.push(PATHS.DASHBOARD)
       } else {
         if (res.error.code == 'INVALID_2FA' && !authStore.isOTPLocked) {
