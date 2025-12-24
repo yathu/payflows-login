@@ -30,8 +30,8 @@ const togglePassword = () => {
 //in prod app will be in seprate file
 const formSchema = toTypedSchema(
   z.object({
-    email: z.string().min(2).max(50).email(),
-    password: z.string().min(5).max(12),
+    email: z.string().min(5).max(254).email(),
+    password: z.string().min(5).max(128),
   }),
 )
 
