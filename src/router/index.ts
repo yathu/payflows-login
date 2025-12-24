@@ -28,7 +28,7 @@ const routes: RouteRecordRaw[] = [
     meta: { requireAuth: true },
   },
   {
-    // all other route redirect to login then before  each will handle auth redirection
+    // all other route redirect to login -> will handle auth redirection
     path: '/:pathMatch(.*)*',
     redirect: PATHS.LOGIN,
   },
@@ -45,11 +45,11 @@ router.beforeEach((to, from, next) => {
   const { authState } = authStore
 
   if (to.name === 'login') {
-    // If user auth then redirect to dashboard
+    // If user already login -> dashboard
     if (authState === 'authenticated') {
       return next(PATHS.DASHBOARD)
     }
-    // If login only redirec to 2fa
+    // If login only -> to 2fa
     if (authState === 'loginOnlySuccess') {
       return next(PATHS.TWOFA)
     }
@@ -59,16 +59,16 @@ router.beforeEach((to, from, next) => {
 
   // check 2fa
   if (to.meta.require2FA) {
-    // If not auth then backto login
+    // If not auth -> backto login
     if (authState === 'unauthenticated') {
       return next(PATHS.LOGIN)
     }
-    // If already authenticated redirect to dashboard
+    // If already Auth -> dashboard
     if (authState === 'authenticated') {
       return next(PATHS.DASHBOARD)
     }
 
-    // If not above then its login only so allow
+    // If not above then its login only state so allow to OTP
     return next()
   }
 
