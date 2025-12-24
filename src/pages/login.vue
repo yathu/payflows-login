@@ -27,7 +27,7 @@ const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value
 }
 
-//in production will be in seprate file
+//in prod app will be in seprate file
 const formSchema = toTypedSchema(
   z.object({
     email: z.string().min(2).max(50).email(),

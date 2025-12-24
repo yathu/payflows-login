@@ -59,7 +59,6 @@ const handleSubmitOTP = async () => {
       errorMessage.value = ''
 
       const res = await verifyOtp({ pass_code: authStore.passCode, code: otp.value })
-
       console.log('OTP verify res==>', res)
 
       if (res?.success) {
@@ -88,16 +87,9 @@ const nextOtpTimeDiff = () => {
   if (authStore.isOTPLocked) return 0
 
   const nowTime = Date.now()
-
-  console.log('nowTime==>', nowTime)
-
   const otpLef = (nowTime - (authStore.lastOtpAttemptTime || 0)) / 1000
-
   if (otpLef > 30) return 0
-
-  console.log('otpLef==>', otpLef)
-
-  return Math.round(5 - otpLef) // this 30 will be from store // env //feature Flag
+  return Math.round(30 - otpLef) // this 30 will be from store // env //feature Flag
 }
 
 function startCountdown(maxSeconds: number) {
@@ -122,9 +114,8 @@ function startCountdown(maxSeconds: number) {
 const handleOTPAttempt = () => {
   authStore.handleOtp()
   const remaining = nextOtpTimeDiff()
-  console.log('remaining effect==>', remaining)
+
   if (remaining > 0) {
-    console.log('start coutdown again ==>')
     startCountdown(remaining)
   } else {
     stopCountdown()
@@ -137,29 +128,6 @@ function stopCountdown() {
     timerId = null
   }
 }
-
-// onMounted(() => {
-//   const remaining = nextOtpTimeDiff()
-//   if (remaining > 0) {
-//     console.log('remaining time==>', remaining)
-//     startCountdown(remaining)
-//   }
-// })
-
-//show timer when last otp time updated
-// watch(
-//   () => authStore.lastOtpAttemptTime,
-//   () => {
-//     const remaining = nextOtpTimeDiff()
-//     console.log('remaining effect==>', remaining)
-//     if (remaining > 0) {
-//       console.log('start coutdown again ==>')
-//       startCountdown(remaining)
-//     } else {
-//       stopCountdown()
-//     }
-//   },
-// )
 
 const handleNewOtpRequest = async () => {
   try {
