@@ -47,20 +47,26 @@ The application will be available at `http://localhost:5173`
 ```
 src/
 ├── components/          # Reusable UI components
-│   └── LoginLayout.vue  # Shared layout for Login and 2FA pages
-├── views/               # Page components
-│   ├── LoginView.vue
-│   ├── TwoFactorView.vue
-│   └── DashboardView.vue
+│   └── ui/              # shadcn-vue UI components
+├── layouts/             # Layout components
+├── pages/               # Page components
+│   ├── login.vue
+│   ├── twoFA.vue
+│   └── dashboard.vue
 ├── stores/              # Pinia state management
-│   └── auth.ts
-├── services/            # API service layer
-│   └── api.ts
-├── composables/         # Reusable composition functions
-│   └── useCountdown.ts
+│   └── authStore.ts
+├── APIi/                # API service layer
+│   └── Api.ts
 ├── types/               # TypeScript type definitions
+│   ├── api.ts
+│   ├── auth.ts
+│   └── index.ts
 ├── router/              # Vue Router configuration
-└── styles/              # Global styles & Tailwind config
+│   └── index.ts
+├── assets/css/          # Global styles
+│   └── style.css
+├── App.vue
+└── main.ts
 ```
 
 ## 🎯 Features
