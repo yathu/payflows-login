@@ -5,7 +5,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import LoginLayout from '@/layouts/LoginLayout.vue'
 import router, { PATHS } from '@/router'
 import { useAuthStore } from '@/stores/authStore'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeMount, ref, watch } from 'vue'
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'vue-input-otp'
 
 const otpMaxLength = ref(6)
@@ -14,10 +14,25 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 
 const authStore = useAuthStore()
+const otpRemainingSeconds = ref(0)
+let timerId: number | null = null
+
+//wen OTP blocked keep on the page but logouted -> refresh to login
+onBeforeMount(() => {
+  if (authStore.isOTPLocked) {
+    authStore.setUnauthenticated()
+    router.push(PATHS.LOGIN)
+  }
+})
 
 //like useEffect
 const otpErrorMessage = computed(() => {
   const attemptsLeft = authStore.getOtpAtteptsRemaining
+
+  if (authStore.isOTPLocked) {
+    //max reached blocked
+    return 'You have reached the maximum OTP attempts. Please try again after 30 minutes.'
+  }
 
   if (attemptsLeft > 0) {
     return `Invalid code. ${attemptsLeft} attempts left.`
@@ -28,7 +43,7 @@ const otpErrorMessage = computed(() => {
 
 //auto submit OTP
 watch(otp, async (newOtp) => {
-  if (newOtp.length === 6 && !isLoading.value) {
+  if (newOtp.length === 6 && !isLoading.value && otpRemainingSeconds.value <= 0) {
     try {
       handleSubmitOTP()
     } catch (error) {
@@ -53,17 +68,10 @@ const handleSubmitOTP = async () => {
         router.push(PATHS.DASHBOARD)
       } else {
         console.log(res)
-        if (res.error.code == 'INVALID_2FA' && authStore.canAttemptOtp) {
+        if (res.error.code == 'INVALID_2FA' && !authStore.isOTPLocked) {
+          errorMessage.value = res?.error.message
           //attempt
-          authStore.handleOtp()
-          const remaining = nextOtpTimeDiff()
-          console.log('remaining effect==>', remaining)
-          if (remaining > 0) {
-            console.log('start coutdown again ==>')
-            startCountdown(remaining)
-          } else {
-            stopCountdown()
-          }
+          handleOTPAttempt()
         } else {
           errorMessage.value = res.error.message
         }
@@ -75,13 +83,9 @@ const handleSubmitOTP = async () => {
   }
 }
 
-const otpRemainingSeconds = ref(0)
-let timerId: number | null = null
-
 const nextOtpTimeDiff = () => {
   if (!authStore.lastOtpAttemptTime) return 0
-  if (authStore.isOtpLocked) return 0
-  if (!authStore.canAttemptOtp) return 0
+  if (authStore.isOTPLocked) return 0
 
   const nowTime = Date.now()
 
@@ -89,9 +93,11 @@ const nextOtpTimeDiff = () => {
 
   const otpLef = (nowTime - (authStore.lastOtpAttemptTime || 0)) / 1000
 
+  if (otpLef > 30) return 0
+
   console.log('otpLef==>', otpLef)
 
-  return Math.round(30 - otpLef) // this 30 will be from store // env //feature Flag
+  return Math.round(5 - otpLef) // this 30 will be from store // env //feature Flag
 }
 
 function startCountdown(maxSeconds: number) {
@@ -113,6 +119,18 @@ function startCountdown(maxSeconds: number) {
   timerId = setTimeout(tick, 1000)
 }
 
+const handleOTPAttempt = () => {
+  authStore.handleOtp()
+  const remaining = nextOtpTimeDiff()
+  console.log('remaining effect==>', remaining)
+  if (remaining > 0) {
+    console.log('start coutdown again ==>')
+    startCountdown(remaining)
+  } else {
+    stopCountdown()
+  }
+}
+
 function stopCountdown() {
   if (timerId) {
     clearTimeout(timerId)
@@ -120,13 +138,13 @@ function stopCountdown() {
   }
 }
 
-onMounted(() => {
-  const remaining = nextOtpTimeDiff()
-  if (remaining > 0) {
-    console.log('remaining time==>', remaining)
-    startCountdown(remaining)
-  }
-})
+// onMounted(() => {
+//   const remaining = nextOtpTimeDiff()
+//   if (remaining > 0) {
+//     console.log('remaining time==>', remaining)
+//     startCountdown(remaining)
+//   }
+// })
 
 //show timer when last otp time updated
 // watch(
@@ -144,11 +162,28 @@ onMounted(() => {
 // )
 
 const handleNewOtpRequest = async () => {
-  const res = await getNewOtpMock()
-  if (res && authStore.canAttemptOtp) {
-    authStore.handleOtp()
+  try {
+    isLoading.value = true
+    otp.value = ''
+    await getNewOtpMock() //this is just for delay
+    isLoading.value = false
+  } catch (error) {
+    console.log('getOTPError', error)
   }
 }
+
+const handleBacktoLogin = () => {
+  authStore.setUnauthenticated()
+  router.push(PATHS.LOGIN)
+}
+
+const isButtonDisabled = computed(
+  () =>
+    otpRemainingSeconds.value > 0 ||
+    authStore.isOTPLocked ||
+    otp.value.length < 6 ||
+    isLoading.value,
+)
 </script>
 
 <template>
@@ -178,7 +213,7 @@ const handleNewOtpRequest = async () => {
     </template>
 
     <template #formSlot>
-      <Button variant="secondary" class="mb-8">
+      <Button @click="handleBacktoLogin" type="button" variant="secondary" class="mb-8">
         <img src="/img/arrow-left.svg" alt="" />
         Back
       </Button>
@@ -208,16 +243,19 @@ const handleNewOtpRequest = async () => {
           {{ otpErrorMessage }}
         </label>
 
-        {{ authStore.lastOtpAttemptTime }} -
-        {{ authStore.getOtpAtteptsRemaining }}
-
         <Button
           @click="handleNewOtpRequest"
           variant="secondary"
-          class="w-full mt-6 text-foreground"
-          :disabled="otpRemainingSeconds > 0 || !authStore.canAttemptOtp || authStore.isOtpLocked"
+          class="w-full mt-6"
+          :class="!isButtonDisabled && 'text-foreground!'"
+          :disabled="isButtonDisabled"
         >
-          <img v-show="isLoading" src="/img/spinner-white.svg" alt="" class="size-4 animate-spin" />
+          <img
+            v-show="isLoading"
+            :src="isButtonDisabled ? '/img/spinner.svg' : '/img/spinner-white.svg'"
+            alt=""
+            class="size-4 animate-spin"
+          />
           Resend code {{ otpRemainingSeconds > 0 ? otpRemainingSeconds : '' }}</Button
         >
       </div>

@@ -63,31 +63,33 @@ export const verifyOtp = async (
   payload: TwoFactorPayload,
 ): Promise<Result<TwoFactorResponse, ErrorResponse>> => {
   try {
-    //mock for testing delay
-    if (payload.code !== '123456') {
-      //return error message & code after delay
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      return {
-        success: false,
-        error: {
-          code: 'INVALID_2FA',
-          message: 'Invalid pass_code or 2FA code',
-        },
-      }
-    } else {
-      //return success after delay
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      return {
-        success: true,
-        data: {
-          token: 'mocked_jwt_token_abcdefg12345',
-          user: {
-            id: 'user_12345',
-            name: 'John Doe',
-            email: 'test@user.com',
+    const response = await fetch(BASE_URL + '/auth/2fa', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      //handle 401, if header 401 logout user
+      if (response.status === 401) {
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_2FA',
+            message: 'Invalid passcode or OTP. Please try again.',
           },
-        },
+        }
       }
+      throw new Error(`Response status: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    return {
+      success: true,
+      data: result,
     }
   } catch (error) {
     console.error('verify OTP error==>', error)
@@ -102,6 +104,6 @@ export const verifyOtp = async (
 }
 
 export const getNewOtpMock = async (): Promise<number> => {
-  setTimeout(() => {}, 2000)
+  await new Promise((resolve) => setTimeout(resolve, 3000))
   return 123456
 }

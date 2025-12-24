@@ -8,7 +8,6 @@ export interface AuthStore {
   user: User | null
   passCode: string | null
   otpAttempts: number
-  isOtpLocked: boolean | null
   otpLockedTime: number | null
   lastOtpAttemptTime: number | null
   maxtOtpAttemptTimes: number

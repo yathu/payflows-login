@@ -73,7 +73,7 @@ router.beforeEach((to, from, next) => {
   }
 
   // check the protected routes, if to.meta.requiresAuth checks all protected routes rather to.name
-  if (to.meta.requiresAuth) {
+  if (to.meta.requireAuth) {
     // If not auth -> login
     if (authState === 'unauthenticated') {
       return next(PATHS.LOGIN)

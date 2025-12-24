@@ -52,10 +52,6 @@ const onSubmit = handleSubmit(async (data) => {
 
     if (res?.success) {
       authStore.setLoginOnlySuccess(res?.data?.pass_code)
-
-      if (authStore.canAttemptOtp) {
-        authStore.handleOtp()
-      }
       router.push(PATHS.TWOFA)
     } else {
       console.log(res)
