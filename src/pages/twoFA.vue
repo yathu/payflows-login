@@ -161,7 +161,7 @@ const isButtonDisabled = computed(
         Spend your time analysing data, not gathering it.
       </h1>
       <ul
-        class="text-white mb-10 lg:mb-22.5 pl-6 mx-4 [&_li]:mb-2 [&_li]:last:mb-0 list-image-[url(/img/list-icon.svg)]"
+        class="text-white pl-6 mx-4 [&_li]:mb-2 [&_li]:last:mb-0 list-image-[url(/img/list-icon.svg)]"
       >
         <li class="body-text-small">
           Import, clean, and enrich data from all your accounts, payment providers and corporate
@@ -177,7 +177,7 @@ const isButtonDisabled = computed(
       </ul>
     </template>
     <template #imageSlot>
-      <img src="/img/2fa-bg.png" class="md:max-w-10/12" alt="" />
+      <img src="/img/2fa-bg.png" class="w-full h-full object-cover" alt="" />
     </template>
 
     <template #formSlot>

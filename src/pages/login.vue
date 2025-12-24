@@ -72,7 +72,7 @@ const onSubmit = handleSubmit(async (data) => {
         Execute payments with control and peace of mind.
       </h1>
       <ul
-        class="text-white mb-10 lg:mb-22.5 pl-6 mx-4 [&_li]:mb-2 [&_li]:last:mb-0 list-image-[url(/img/list-icon.svg)]"
+        class="text-white pl-6 mx-4 [&_li]:mb-2 [&_li]:last:mb-0 list-image-[url(/img/list-icon.svg)]"
       >
         <li class="body-text-small">
           Generate standard intakes and route them to the right approval flow.
@@ -88,7 +88,7 @@ const onSubmit = handleSubmit(async (data) => {
       </ul>
     </template>
     <template #imageSlot>
-      <img src="/img/login-content-bg.png" class="md:max-w-10/12" alt="" />
+      <img src="/img/login-content-bg.png" class="w-full h-full object-cover" alt="" />
     </template>
 
     <template #formSlot>
