@@ -1,48 +1,120 @@
-# login-flow
+# Login Flow
 
-This template should help get you started developing with Vue 3 in Vite.
+A secure login and two-factor authentication flow built with Vue 3, TypeScript, and Tailwind CSS.
 
-## Recommended IDE Setup
+## 🚀 Quick Start
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Prerequisites
 
-## Recommended Browser Setup
+- Node.js 18 or higher
+- npm or yarn
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+> **Development Environment:** This project was developed and tested with Node.js `v22.18.0` and Yarn `v4.12.0`
 
-## Type Support for `.vue` Imports in TS
+### Installation
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+```bash
+# Install dependencies
+npm install
+# or
+yarn install
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-yarn
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+# Start development server
+npm run dev
+# or
 yarn dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The application will be available at `http://localhost:5173`
 
-```sh
-yarn build
+## Test Credentials
+
+- **Email:** `test@test.com`
+- **Password:** `My@password1`
+- **2FA Code:** `123456`
+
+## Tech Stack
+
+**Core:** Vue 3, TypeScript, Vite  
+**State Management:** Pinia  
+**Routing:** Vue Router  
+**Styling:** Tailwind CSS 4, shadcn-vue  
+**Form Validation:** Zod, VeeValidate  
+**HTTP Client:** Fetch API
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   └── LoginLayout.vue  # Shared layout for Login and 2FA pages
+├── views/               # Page components
+│   ├── LoginView.vue
+│   ├── TwoFactorView.vue
+│   └── DashboardView.vue
+├── stores/              # Pinia state management
+│   └── auth.ts
+├── services/            # API service layer
+│   └── api.ts
+├── composables/         # Reusable composition functions
+│   └── useCountdown.ts
+├── types/               # TypeScript type definitions
+├── router/              # Vue Router configuration
+└── styles/              # Global styles & Tailwind config
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## 🎯 Features
 
-```sh
-yarn lint
-```
+- ✅ Login page with email/password authentication
+- ✅ Two-factor authentication (2FA) with 6-digit OTP
+- ✅ Protected dashboard page
+- ✅ Form validation with error messages
+- ✅ OTP resend with 30-second countdown (persists on refresh)
+- ✅ Maximum 3 OTP attempts tracking
+- ✅ Loading states and disabled buttons
+- ✅ Route guards and navigation protection
+- ✅ Responsive design (mobile + desktop)
+- ✅ Session persistence with sessionStorage
+
+## 🏛️ Key Decisions
+
+### Authentication Flow
+
+Implemented three authentication states:
+
+- **`unauthenticated`** - User not logged in
+- **`loginOnlySuccess`** - Login verified, awaiting 2FA
+- **`authenticated`** - Fully authenticated (login + 2FA complete)
+
+**Storage:**
+
+- `sessionStorage` - Temporary 2FA session (persists on page refresh, cleared when tab is closed)
+
+### Route Protection
+
+Navigation guards enforce access control:
+
+- Login page redirects authenticated users to dashboard
+- 2FA page requires successful login first
+- Dashboard requires full authentication
+
+### Shared Layout
+
+Created `LoginLayout.vue` component used by both Login and 2FA pages for consistent design and code reusability.
+
+### **Assumption**
+
+The Figma design is based on a 764 height screen. To keep the bottom left image visually consistent across different screen sizes, I assumed the image should remain fixed at the bottom left of the screen and implemented it accordingly.
+
+## ⚠️ Known Limitations
+
+### Session Persistence
+
+- **Login session (before 2FA):** Persists on page refresh, stays on 2FA page. Cleared when tab is closed.
+- **OTP countdown timer:** Timer state is saved in sessionStorage. If you refresh at 20 seconds, countdown resumes from 20 seconds. Cleared when tab is closed.
+
+### OTP Attempt Counter
+
+The OTP attempt counter is session-based. After 3 failed attempts, the error message displays: "You have reached the maximum OTP attempts. Please try again after 30 minutes."
+
+**Behavior on refresh:** User is redirected back to login page (unauthenticated state), but the error message briefly displays before redirect.
