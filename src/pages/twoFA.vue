@@ -197,11 +197,15 @@ const isButtonDisabled = computed(
           v-model="otp"
           :maxlength="6"
           :pattern="REGEXP_ONLY_DIGITS_AND_CHARS"
-          class="w-full gap-0 mb-1"
+          class="w-full flex justify-center gap-0 mb-1"
           :disabled="isLoading"
         >
-          <InputOTPGroup v-for="n in otpMaxLength" :key="n" :class="n === 3 ? 'me-8' : 'me-4'">
-            <InputOTPSlot class="title-text-large p-4 h-19 w-14" :index="n - 1" />
+          <InputOTPGroup
+            v-for="n in otpMaxLength"
+            :key="n"
+            :class="n === 3 ? 'me-4 lg:me-8' : 'me-2 lg:me-4'"
+          >
+            <InputOTPSlot class="title-text-large p-4 h-12 lg:h-19 w-10 lg:w-14" :index="n - 1" />
           </InputOTPGroup>
         </InputOTP>
 

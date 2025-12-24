@@ -5,18 +5,18 @@ import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
 
-const handleLogout = ()=>{
+const handleLogout = () => {
   authStore.setUnauthenticated()
-  router.push(PATHS.LOGIN);
+  router.push(PATHS.LOGIN)
 }
 </script>
 
-
-
 <template>
   <div class="h-svh w-svw flex flex-col justify-center items-center">
-    <h2 class="title-text">Wellcome! {{ authStore.user?.name }}</h2>
+    <h2 class="title-text mb-4">
+      Wellcome! <span class="text-primary">{{ authStore.user?.name }}</span>
+    </h2>
 
-    <Button @click="handleLogout" variant="default" class=""> Signout </Button>
+    <Button @click="handleLogout" variant="secondary" class=""> Signout </Button>
   </div>
 </template>

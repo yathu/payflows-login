@@ -143,10 +143,10 @@
     letter-spacing: -0.02em;
   }
   .title-text-large {
+    @apply text-lg lg:text-[32px]!;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 600;
-    font-size: 32px !important;
     line-height: 44px;
     letter-spacing: -0.0225em;
   }
